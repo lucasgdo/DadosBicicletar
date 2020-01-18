@@ -5,7 +5,7 @@ import core
 import json
 
 class srv:
-    def __init__(self, host='', porta=8080):
+    def __init__(self, host='0.0.0.0', porta=8080):
         self._h = host
         self._p = porta
         self._a = Bottle()
