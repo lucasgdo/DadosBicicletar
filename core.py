@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from selenium import webdriver
+import requests
+import re
+import json
 
-_page = webdriver.PhantomJS()
+
 
 _transtable = (
     (u'ã', u'a'), (u'â', u'a'), (u'ä', u'a'), (u'á', u'a'), (u'à', u'a'),
@@ -20,12 +22,17 @@ def _limpa(texto):
     return _output
 
 def _get():
-    _page.get("http://www.bicicletar.com.br/mapaestacao.aspx")
-    _estacoes = _page.execute_script("return beaches")
+    pagina = requests.get("http://www.bicicletar.com.br/mapaestacao.aspx")
+    conteudo = pagina.text
+    estacoes = re.search('beaches = (.*)\>', conteudo)
+    estacoes_2 = estacoes.group()[10:].replace("'", '"')
+    estacoes_3 = estacoes_2[:-6]
+    json_estacoes = estacoes_3[:-2] + estacoes_3[-1]
+    _estacoes = json.loads(json_estacoes)
     return _estacoes
 
 def _busca(criterio):
-    _criterio = criterio.lower().decode('UTF-8')
+    _criterio = criterio.lower()
     _criterio = _limpa(_criterio)
     _estacoes = _get()
     _bloco = []
